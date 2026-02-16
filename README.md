@@ -96,7 +96,7 @@ cd burst-news
 
 # Virtual environment
 python3 -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
+source venv/bin/activate   # Windows: venv\\Scripts\\activate
 
 # Dependencies
 pip install -r requirements.txt
@@ -371,4 +371,3 @@ MIT License — see [LICENSE](LICENSE) for details.
 **[Your Name]**  
 - GitHub: [@yourusername](https://github.com/yourusername)  
 - LinkedIn: [Your Profile](https://linkedin.com/in/yourprofile)
-# Burst-Editorial-News-Platform
