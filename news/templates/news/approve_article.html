@@ -1,0 +1,49 @@
+{% extends 'news/base.html' %}
+
+{% block title %}Review article - Burst{% endblock %}
+
+{% block content %}
+<h1>Review and approve</h1>
+<p class="page-lead">Review the article below, then update its status or approve it for publication.</p>
+
+<div class="article-card">
+    <h2 class="article-title">{{ article.title }}</h2>
+    <div class="article-meta">
+        By {{ article.author.username }}
+        {% if article.publisher %} · {{ article.publisher.name }}{% endif %}
+        {% if article.category %} · {{ article.category.name }}{% endif %}
+        · {{ article.created_at|date:"M d, Y" }}
+    </div>
+
+    {% if article.summary %}
+        <div class="article-summary">
+            <h3>Summary</h3>
+            <p>{{ article.summary }}</p>
+        </div>
+    {% endif %}
+
+    <div class="article-content">
+        {{ article.content|linebreaks }}
+    </div>
+</div>
+
+<section class="form-section">
+    <h2 class="form-section-title">Decision</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_status" class="form-label">Status</label>
+            {{ form.status }}
+        </div>
+        <div class="form-check">
+            {{ form.is_approved }}
+            <div>
+                <label for="id_is_approved" class="form-label">Mark as approved</label>
+                <small class="form-hint">Approved articles can be published. Subscribers will be notified.</small>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Save decision</button>
+        <a href="{% url 'news:article_detail' article.pk %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</section>
+{% endblock %}

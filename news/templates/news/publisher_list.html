@@ -1,0 +1,32 @@
+{% extends 'news/base.html' %}
+
+{% block title %}Publishers - Burst{% endblock %}
+
+{% block content %}
+<h1>Manage publishers</h1>
+<p class="page-lead">Create and manage publishing houses. Each can have editors, journalists, and subscribers.</p>
+
+<p><a href="{% url 'news:publisher_create' %}" class="btn btn-primary">Add publisher</a></p>
+
+{% if publishers %}
+    {% for publisher in publishers %}
+        <article class="article-card">
+            <h2 class="article-title">{{ publisher.name }}</h2>
+            <div class="article-meta">
+                {% if publisher.owner %}{{ publisher.owner.username }}{% else %}No owner{% endif %}
+                {% if publisher.website %} · <a href="{{ publisher.website }}" target="_blank" rel="noopener">{{ publisher.website }}</a>{% endif %}
+                · {{ publisher.editors.count }} editors · {{ publisher.journalists.count }} journalists
+            </div>
+            {% if publisher.description %}
+                <p>{{ publisher.description|truncatewords:30 }}</p>
+            {% endif %}
+            <div class="article-actions">
+                <a href="{% url 'news:publisher_edit' publisher.pk %}" class="btn btn-secondary">Edit</a>
+                <a href="{% url 'admin:news_publisher_change' publisher.pk %}" class="btn btn-secondary">Admin</a>
+            </div>
+        </article>
+    {% endfor %}
+{% else %}
+    <p>No publishers yet. <a href="{% url 'news:publisher_create' %}">Create the first one</a>.</p>
+{% endif %}
+{% endblock %}

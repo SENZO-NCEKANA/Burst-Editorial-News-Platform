@@ -1,0 +1,102 @@
+{% extends 'news/base.html' %}
+
+{% block title %}Search - Burst{% endblock %}
+
+{% block content %}
+<h1>Search</h1>
+<p class="page-lead">Find articles by keyword, category, or publisher.</p>
+
+<div class="search-form">
+    <form method="get" action="{% url 'news:search_articles' %}" class="search-form-inline">
+        <div class="form-group">
+            <input type="text" name="q" class="form-control" placeholder="Search articles..." value="{{ query }}" aria-label="Search">
+        </div>
+        <div class="form-group">
+            <select name="category" class="form-control" aria-label="Filter by category">
+                <option value="">All categories</option>
+                {% for category in categories %}
+                    <option value="{{ category.name }}" {% if request.GET.category == category.name %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <select name="publisher" class="form-control" aria-label="Filter by publisher">
+                <option value="">All publishers</option>
+                {% for publisher in publishers %}
+                    <option value="{{ publisher.name }}" {% if request.GET.publisher == publisher.name %}selected{% endif %}>{{ publisher.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
+
+{% if page_obj %}
+    <h2>Results</h2>
+    {% if query or request.GET.category or request.GET.publisher %}
+        <p class="article-meta">
+            {% if query %}Searching for "{{ query }}"{% endif %}
+            {% if request.GET.category %} · {{ request.GET.category }}{% endif %}
+            {% if request.GET.publisher %} · {{ request.GET.publisher }}{% endif %}
+            · {{ page_obj.paginator.count }} article{{ page_obj.paginator.count|pluralize }} found
+        </p>
+    {% endif %}
+
+    {% for article in page_obj %}
+        <article class="article-card">
+            {% if article.hero_image_url %}
+            <a href="{% url 'news:article_detail' article.pk %}" class="article-card-image-link">
+                <img src="{{ article.hero_image_url }}" alt="" class="article-card-hero">
+            </a>
+            {% endif %}
+            <div class="article-card-body">
+                <h2 class="article-title">
+                    <a href="{% url 'news:article_detail' article.pk %}">{{ article.title }}</a>
+                </h2>
+                <div class="article-meta">
+                    By {{ article.author.username }}
+                    {% if article.publisher %} · {{ article.publisher.name }}{% endif %}
+                    {% if article.category %} · {{ article.category.name }}{% endif %}
+                    · {{ article.created_at|date:"M d, Y" }}
+                    · {{ article.reading_time_minutes }} min read
+                </div>
+                {% if article.summary %}
+                    <p>{{ article.summary }}</p>
+                {% endif %}
+                <div class="article-actions">
+                    <a href="{% url 'news:article_detail' article.pk %}" class="btn btn-primary">Read article</a>
+                </div>
+            </div>
+        </article>
+    {% endfor %}
+
+    {% if page_obj.has_other_pages %}
+        <nav class="pagination" aria-label="Search results pagination">
+            {% if page_obj.has_previous %}
+                <a href="?q={{ query|urlencode }}&category={{ request.GET.category|urlencode }}&publisher={{ request.GET.publisher|urlencode }}&page=1">First</a>
+                <a href="?q={{ query|urlencode }}&category={{ request.GET.category|urlencode }}&publisher={{ request.GET.publisher|urlencode }}&page={{ page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+            {% if page_obj.has_next %}
+                <a href="?q={{ query|urlencode }}&category={{ request.GET.category|urlencode }}&publisher={{ request.GET.publisher|urlencode }}&page={{ page_obj.next_page_number }}">Next</a>
+                <a href="?q={{ query|urlencode }}&category={{ request.GET.category|urlencode }}&publisher={{ request.GET.publisher|urlencode }}&page={{ page_obj.paginator.num_pages }}">Last</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+{% elif query or request.GET.category or request.GET.publisher %}
+    <div class="empty-state">
+        <p class="empty-state-title">No articles found</p>
+        <p class="empty-state-text">Try different search terms or filters. No articles match "{{ query|default:"" }}"{% if request.GET.category %} in {{ request.GET.category }}{% endif %}{% if request.GET.publisher %} from {{ request.GET.publisher }}{% endif %}.</p>
+        <a href="{% url 'news:search_articles' %}" class="btn btn-secondary">Clear search</a>
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p class="empty-state-title">Search articles</p>
+        <p class="empty-state-text">Enter a search term or choose filters above to find articles.</p>
+    </div>
+{% endif %}
+
+<a href="{% url 'news:home' %}" class="btn btn-secondary">Back to home</a>
+{% endblock %}

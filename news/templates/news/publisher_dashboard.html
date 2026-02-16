@@ -1,0 +1,95 @@
+{% extends 'news/base.html' %}
+
+{% block title %}{{ publisher.name }} - Burst{% endblock %}
+
+{% block content %}
+<h1>{{ publisher.name }}</h1>
+<p class="page-lead">Manage your publishing house, team, and content.</p>
+
+<div class="dashboard-grid">
+    <section class="article-card dashboard-section">
+        <h2>Profile</h2>
+        <p>{% if publisher.description %}{{ publisher.description }}{% else %}No description set. Add one to help readers discover you.{% endif %}</p>
+        {% if publisher.website %}
+            <p><a href="{{ publisher.website }}" target="_blank" rel="noopener">Visit website</a></p>
+        {% endif %}
+        <p class="article-meta">
+            {{ article_count }} articles · {{ subscriber_count }} subscriber{{ subscriber_count|pluralize }}
+        </p>
+    </section>
+
+    <section class="article-card dashboard-section">
+        <h2>Team</h2>
+        <h3>Editors ({{ editors|length }})</h3>
+        {% if editors %}
+            <ul>
+                {% for ed in editors %}
+                <li>{{ ed.username }} · {{ ed.email }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No editors yet. Add one below.</p>
+        {% endif %}
+
+        <h3>Journalists ({{ journalists|length }})</h3>
+        {% if journalists %}
+            <ul>
+                {% for j in journalists %}
+                <li>{{ j.username }} · {{ j.email }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No journalists yet. Add one below.</p>
+        {% endif %}
+
+        <h3>Add team member</h3>
+        <p class="form-hint">Enter the username of an existing editor or journalist. They must already have an account with that role.</p>
+        <form method="post" class="form-section">
+            {% csrf_token %}
+            <input type="hidden" name="add_member" value="1">
+            <div class="form-group">
+                <label for="id_username" class="form-label">Username</label>
+                {{ add_form.username }}
+            </div>
+            <div class="form-group">
+                <label for="id_role" class="form-label">Role</label>
+                {{ add_form.role }}
+            </div>
+            <button type="submit" class="btn btn-primary">Add member</button>
+        </form>
+    </section>
+
+    <section class="article-card dashboard-section">
+        <h2>Recent articles</h2>
+        {% if articles %}
+            <ul>
+                {% for article in articles %}
+                <li>
+                    <a href="{% url 'news:article_detail' article.pk %}">{{ article.title }}</a>
+                    · {{ article.get_status_display }} · {{ article.created_at|date:"M d, Y" }}
+                </li>
+                {% endfor %}
+            </ul>
+            <p><a href="{% url 'news:article_list' %}">View all articles</a></p>
+        {% else %}
+            <p>No articles yet. Journalists can create them from the Articles page.</p>
+        {% endif %}
+    </section>
+
+    <section class="article-card dashboard-section">
+        <h2>Recent newsletters</h2>
+        {% if newsletters %}
+            <ul>
+                {% for nl in newsletters %}
+                <li>
+                    <a href="{% url 'news:newsletter_detail' nl.pk %}">{{ nl.title }}</a>
+                    · {{ nl.created_at|date:"M d, Y" }}
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No newsletters yet.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'news/base.html' %}
+
+{% block title %}{% if publisher %}Edit{% else %}Add{% endif %} publisher - Burst{% endblock %}
+
+{% block content %}
+<h1>{% if publisher %}Edit publisher{% else %}Add publisher{% endif %}</h1>
+<p class="page-lead">{% if publisher %}Update the publishing house details below.{% else %}Create a new publishing house. Publishers can then add editors and journalists.{% endif %}</p>
+
+<p><a href="{% url 'news:publisher_list' %}" class="btn btn-secondary">Back to publishers</a></p>
+
+<section class="form-section">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_name" class="form-label">Name</label>
+            {{ form.name }}
+            {% if form.name.errors %}<span class="error">{{ form.name.errors.0 }}</span>{% endif %}
+        </div>
+        <div class="form-group">
+            <label for="id_description" class="form-label">Description (optional)</label>
+            {{ form.description }}
+        </div>
+        <div class="form-group">
+            <label for="id_website" class="form-label">Website (optional)</label>
+            {{ form.website }}
+        </div>
+        <div class="form-group">
+            <label for="id_owner" class="form-label">Owner</label>
+            {{ form.owner }}
+            <small class="form-hint">Assign a user with Publisher role to manage this house. Optional.</small>
+            {% if form.owner.errors %}<span class="error">{{ form.owner.errors.0 }}</span>{% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">{% if publisher %}Save changes{% else %}Create publisher{% endif %}</button>
+    </form>
+</section>
+{% endblock %}

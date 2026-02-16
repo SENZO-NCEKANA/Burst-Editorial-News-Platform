@@ -1,0 +1,84 @@
+{% extends 'news/base.html' %}
+
+{% block title %}Articles - Burst{% endblock %}
+
+{% block content %}
+<h1>Articles</h1>
+<p class="page-lead">Browse all articles. Filter by your role to see drafts, pending reviews, or published content.</p>
+
+{% if user.is_authenticated and user.is_journalist %}
+    <p><a href="{% url 'news:create_article' %}" class="btn btn-primary">Create new article</a></p>
+{% endif %}
+
+{% if page_obj %}
+    {% for article in page_obj %}
+        <article class="article-card">
+            {% if article.hero_image_url %}
+            <a href="{% url 'news:article_detail' article.pk %}" class="article-card-image-link">
+                <img src="{{ article.hero_image_url }}" alt="" class="article-card-hero">
+            </a>
+            {% endif %}
+            <div class="article-card-body">
+                <h2 class="article-title">
+                    <a href="{% url 'news:article_detail' article.pk %}">{{ article.title }}</a>
+                </h2>
+                <div class="article-meta">
+                    By {{ article.author.username }}
+                    {% if article.publisher %} · {{ article.publisher.name }}{% endif %}
+                    {% if article.category %} · {{ article.category.name }}{% endif %}
+                    · {{ article.created_at|date:"M d, Y" }}
+                    · {{ article.reading_time_minutes }} min read
+                    · <span class="status-{{ article.status }}">{{ article.get_status_display }}</span>
+                    {% if article.is_approved %}
+                        · <span class="status-approved">Approved</span>
+                    {% endif %}
+                </div>
+                {% if article.summary %}
+                    <p>{{ article.summary }}</p>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    <div class="article-actions">
+                        <a href="{% url 'news:article_detail' article.pk %}" class="btn btn-primary">Read</a>
+                        {% if user == article.author or user.is_editor %}
+                            <a href="{% url 'news:edit_article' article.pk %}" class="btn btn-secondary">Edit</a>
+                        {% endif %}
+                        {% if user.is_editor and not article.is_approved %}
+                            <a href="{% url 'news:approve_article' article.pk %}" class="btn btn-primary">Review</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </article>
+    {% endfor %}
+
+    {% if page_obj.has_other_pages %}
+        <nav class="pagination" aria-label="Article pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+{% else %}
+    <div class="empty-state">
+        <p class="empty-state-title">No articles found</p>
+        <p class="empty-state-text">
+            {% if user.is_journalist %}
+                <a href="{% url 'news:create_article' %}">Create your first article</a> to get started.
+            {% else %}
+                No articles to display yet.
+            {% endif %}
+        </p>
+    </div>
+{% endif %}
+
+<a href="{% url 'news:home' %}" class="btn btn-secondary">Back to home</a>
+{% endblock %}

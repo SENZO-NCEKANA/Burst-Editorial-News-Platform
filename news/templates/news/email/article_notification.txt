@@ -1,0 +1,16 @@
+New article: {{ article.title }}
+
+A new article has been published that you might be interested in.
+
+{{ article.title }}
+
+Author: {{ article.author.username }}
+{% if article.publisher %}Publisher: {{ article.publisher.name }}
+{% endif %}{% if article.category %}Category: {{ article.category.name }}
+{% endif %}
+{% if article.summary %}{{ article.summary }}
+
+{% endif %}
+Read the full article: {{ site_url }}/articles/{{ article.pk }}/
+
+Thank you for subscribing.

@@ -1,0 +1,44 @@
+{% extends 'news/base.html' %}
+{% block title %}Terms of Service - Burst{% endblock %}
+{% block content %}
+<h1>Terms of Service</h1>
+<p class="page-lead">Last updated: {% now "F d, Y" %}</p>
+
+<div class="legal-content">
+    <h2>1. Acceptance of Terms</h2>
+    <p>By accessing or using Burst ("the Service"), you agree to be bound by these Terms of Service. If you do not agree, do not use the Service.</p>
+
+    <h2>2. Description of Service</h2>
+    <p>Burst is a news platform that allows users to read articles, subscribe to publishers and journalists, and (for authorized users) create, edit, and publish content. We reserve the right to modify or discontinue the Service at any time.</p>
+
+    <h2>3. Account Registration</h2>
+    <p>You must create an account to access certain features. You agree to provide accurate information and keep your credentials secure. You are responsible for all activity under your account.</p>
+
+    <h2>4. User Conduct</h2>
+    <p>You agree not to:</p>
+    <ul>
+        <li>Post false, misleading, or defamatory content</li>
+        <li>Infringe on intellectual property or privacy rights</li>
+        <li>Harass, abuse, or harm others</li>
+        <li>Circumvent security measures or abuse the Service</li>
+    </ul>
+    <p>We may suspend or terminate accounts that violate these terms.</p>
+
+    <h2>5. Content and Intellectual Property</h2>
+    <p>You retain ownership of content you publish. By posting, you grant Burst a non-exclusive license to display, distribute, and promote that content. We do not claim ownership of user-generated content.</p>
+
+    <h2>6. Privacy</h2>
+    <p>Your use of the Service is also governed by our <a href="{% url 'news:privacy' %}">Privacy Policy</a>.</p>
+
+    <h2>7. Limitation of Liability</h2>
+    <p>Burst is provided "as is." We are not liable for indirect, incidental, or consequential damages arising from your use of the Service.</p>
+
+    <h2>8. Changes</h2>
+    <p>We may update these terms. Continued use after changes constitutes acceptance. We will notify users of material changes where appropriate.</p>
+
+    <h2>9. Contact</h2>
+    <p>Questions? Contact us at <a href="mailto:support@burst.app">support@burst.app</a>.</p>
+</div>
+
+<p><a href="{% url 'news:home' %}" class="btn btn-secondary">Back to home</a></p>
+{% endblock %}

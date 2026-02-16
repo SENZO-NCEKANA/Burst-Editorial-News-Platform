@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New article: {{ article.title }}</title>
+    <style>
+        body { font-family: system-ui, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 2rem; }
+        a { color: #00b894; }
+        .card { background: #f5f5f5; padding: 1.5rem; border-radius: 8px; margin: 1rem 0; }
+        .btn { display: inline-block; background: #00b894; color: #fff; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 6px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>New article for you</h1>
+    <p>A new article has been published that you might be interested in.</p>
+
+    <div class="card">
+        <h2 style="margin-top: 0;">{{ article.title }}</h2>
+        <p><strong>Author:</strong> {{ article.author.username }}</p>
+        {% if article.publisher %}
+            <p><strong>Publisher:</strong> {{ article.publisher.name }}</p>
+        {% endif %}
+        {% if article.category %}
+            <p><strong>Category:</strong> {{ article.category.name }}</p>
+        {% endif %}
+        {% if article.summary %}
+            <p>{{ article.summary }}</p>
+        {% endif %}
+        <p><a href="{{ site_url }}/articles/{{ article.pk }}/" class="btn">Read article</a></p>
+    </div>
+
+    <p>Thank you for subscribing.</p>
+</body>
+</html>

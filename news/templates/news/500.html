@@ -1,0 +1,13 @@
+{% extends 'news/base.html' %}
+{% block title %}Something went wrong - Burst{% endblock %}
+{% block content %}
+<div class="error-page">
+    <div class="error-page-code">500</div>
+    <h1>Something went wrong</h1>
+    <p class="page-lead">We're sorry, but something unexpected happened. Our team has been notified.</p>
+    <div class="error-page-actions">
+        <a href="{% url 'news:home' %}" class="btn btn-primary">Go to home</a>
+        <a href="{% url 'news:article_list' %}" class="btn btn-secondary">Browse articles</a>
+    </div>
+</div>
+{% endblock %}

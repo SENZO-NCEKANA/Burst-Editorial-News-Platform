@@ -1,0 +1,50 @@
+{% extends 'news/base.html' %}
+
+{% block title %}{{ newsletter.title }} - Burst{% endblock %}
+
+{% block meta_description %}{{ newsletter.content|striptags|truncatewords:30 }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}{{ newsletter.title }} - Burst{% endblock %}
+{% block og_description %}{{ newsletter.content|striptags|truncatewords:50 }}{% endblock %}
+{% block twitter_title %}{{ newsletter.title }} - Burst{% endblock %}
+{% block twitter_description %}{{ newsletter.content|striptags|truncatewords:50 }}{% endblock %}
+{% if newsletter.cover_image_url %}{% block og_image %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ newsletter.cover_image_url }}">
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ newsletter.cover_image_url }}">
+{% endblock %}{% endif %}
+
+{% block content %}
+<article class="article-card article-detail">
+    {% if newsletter.cover_image_url %}
+    <img src="{{ newsletter.cover_image_url }}" alt="" class="article-detail-hero">
+    {% endif %}
+    <header>
+        <h1 class="article-title">{{ newsletter.title }}</h1>
+        <div class="article-meta">
+            By {{ newsletter.author.username }}
+            {% if newsletter.publisher %} · {{ newsletter.publisher.name }}{% endif %}
+            · {{ newsletter.created_at|date:"M d, Y" }}
+        </div>
+    </header>
+
+    <div class="article-content">
+        {{ newsletter.content|linebreaks }}
+    </div>
+
+    <div class="article-share">
+        <span class="article-share-label">Share</span>
+        <a href="https://twitter.com/intent/tweet?text={{ newsletter.title|urlencode }}&url={{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer" class="btn btn-share" aria-label="Share on Twitter">Twitter</a>
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer" class="btn btn-share" aria-label="Share on LinkedIn">LinkedIn</a>
+        <a href="https://wa.me/?text={{ newsletter.title|urlencode }}%20{{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer" class="btn btn-share" aria-label="Share on WhatsApp">WhatsApp</a>
+        <button type="button" class="btn btn-share" onclick="navigator.clipboard.writeText('{{ request.build_absolute_uri }}'); this.textContent='Copied!'" aria-label="Copy link">Copy link</button>
+    </div>
+
+    {% if user.is_authenticated and user == newsletter.author %}
+        <div class="article-actions">
+            <a href="{% url 'news:newsletter_list' %}" class="btn btn-secondary">Back to newsletters</a>
+        </div>
+    {% endif %}
+</article>
+
+<a href="{% url 'news:newsletter_list' %}" class="btn btn-secondary">Back to newsletters</a>
+{% endblock %}

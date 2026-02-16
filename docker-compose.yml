@@ -1,0 +1,20 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DEBUG=${DEBUG:-True}
+      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,web
+      - DB_ENGINE=${DB_ENGINE:-sqlite}
+      - DB_NAME=/app/data/db.sqlite3
+    volumes:
+      - .:/app
+      - db_data:/app/data
+    entrypoint: ["sh", "/app/docker-entrypoint.sh"]
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+volumes:
+  db_data:

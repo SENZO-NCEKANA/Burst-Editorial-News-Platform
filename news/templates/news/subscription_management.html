@@ -1,0 +1,48 @@
+{% extends 'news/base.html' %}
+
+{% block title %}My subscriptions - Burst{% endblock %}
+
+{% block content %}
+<h1>My subscriptions</h1>
+<p class="page-lead">Stay updated. Subscribe to publishers or journalists to see their content in your feed.</p>
+
+<section class="form-section">
+    <h2 class="form-section-title">Add subscription</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_publisher" class="form-label">Publisher</label>
+            {{ form.publisher }}
+        </div>
+        <div class="form-group">
+            <label for="id_journalist" class="form-label">Journalist</label>
+            {{ form.journalist }}
+        </div>
+        <small class="form-hint">Choose a publisher, a journalist, or both. You need at least one.</small>
+        <button type="submit" class="btn btn-primary">Subscribe</button>
+    </form>
+</section>
+
+<h2>Your subscriptions</h2>
+{% if subscriptions %}
+    {% for subscription in subscriptions %}
+        <div class="article-card">
+            <h3 class="mb-0">
+                {% if subscription.publisher %}
+                    {{ subscription.publisher.name }}
+                {% else %}
+                    {{ subscription.journalist.username }}
+                {% endif %}
+            </h3>
+            <p class="article-meta mb-0">Subscribed {{ subscription.created_at|date:"M d, Y" }}</p>
+            <div class="article-actions">
+                <a href="{% url 'news:delete_subscription' subscription.pk %}" class="btn btn-danger">Unsubscribe</a>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>You have no subscriptions yet. Add one above to get started.</p>
+{% endif %}
+
+<a href="{% url 'news:home' %}" class="btn btn-secondary">Back to home</a>
+{% endblock %}

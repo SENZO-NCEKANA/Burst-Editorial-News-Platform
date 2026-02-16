@@ -1,0 +1,44 @@
+{% extends 'news/base.html' %}
+
+{% block title %}Newsletters - Burst{% endblock %}
+
+{% block content %}
+<h1>Newsletters</h1>
+<p class="page-lead">Browse newsletters from publishers and journalists you follow.</p>
+
+{% if user.is_authenticated and user.is_journalist %}
+<p><a href="{% url 'news:create_newsletter' %}" class="btn btn-primary">Create new newsletter</a></p>
+{% endif %}
+
+{% if newsletters %}
+    {% for nl in newsletters %}
+    <article class="article-card">
+        {% if nl.cover_image_url %}
+        <a href="{% url 'news:newsletter_detail' nl.pk %}" class="article-card-image-link">
+            <img src="{{ nl.cover_image_url }}" alt="" class="article-card-hero">
+        </a>
+        {% endif %}
+        <div class="article-card-body">
+            <h2 class="article-title">
+                <a href="{% url 'news:newsletter_detail' nl.pk %}">{{ nl.title }}</a>
+            </h2>
+            <div class="article-meta">
+                By {{ nl.author.username }}
+                {% if nl.publisher %} · {{ nl.publisher.name }}{% endif %}
+                · {{ nl.created_at|date:"M d, Y" }}
+            </div>
+            <div class="article-actions">
+                <a href="{% url 'news:newsletter_detail' nl.pk %}" class="btn btn-primary">Read newsletter</a>
+            </div>
+        </div>
+    </article>
+    {% endfor %}
+{% else %}
+<div class="empty-state">
+    <p class="empty-state-text">No newsletters yet.</p>
+    {% if user.is_authenticated and user.is_journalist %}
+    <a href="{% url 'news:create_newsletter' %}" class="btn btn-primary">Create your first newsletter</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,32 @@
+# Burst News Application — Production Dependencies
+# Python 3.11+ recommended
+
+# Core
+Django==5.2.5
+python-decouple==3.8
+
+# Database (SQLite is built-in; for MySQL/MariaDB install PyMySQL)
+PyMySQL==1.1.1
+
+# API
+djangorestframework==3.16.1
+djangorestframework-xml>=2.0.0
+
+# Authentication & OAuth
+django-allauth>=65.0.0
+requests==2.31.0
+requests-oauthlib==1.3.1
+cryptography>=43.0.0
+PyJWT>=2.0.0
+
+# Media (image uploads)
+Pillow>=10.4.0
+
+# HTTP & CORS (optional, for API consumption)
+django-cors-headers==4.3.1
+
+# Production (Railway, Heroku, etc.)
+gunicorn>=21.0.0
+whitenoise>=6.6.0
+psycopg2-binary>=2.9.9
+dj-database-url>=2.1.0

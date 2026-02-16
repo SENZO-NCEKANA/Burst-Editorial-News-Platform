@@ -1,0 +1,47 @@
+{% extends 'news/base.html' %}
+
+{% block title %}Edit article - Burst{% endblock %}
+
+{% block content %}
+<h1>Edit article</h1>
+<p class="page-lead">Make changes to your article. Your updates will be saved as a draft.</p>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <section class="form-section">
+        <h2 class="form-section-title">Article details</h2>
+        <div class="form-group">
+            <label for="id_title" class="form-label">Title</label>
+            {{ form.title }}
+        </div>
+        <div class="form-group">
+            <label for="id_hero_image" class="form-label">Hero image (optional)</label>
+            {{ form.hero_image }}
+            {% if article.hero_image_url %}<p class="form-hint">Current: <a href="{{ article.hero_image_url }}">View current image</a></p>{% endif %}
+        </div>
+        <div class="form-group">
+            <label for="id_summary" class="form-label">Summary (optional)</label>
+            {{ form.summary }}
+        </div>
+        <div class="form-group">
+            <label for="id_content" class="form-label">Content</label>
+            {{ form.content }}
+        </div>
+    </section>
+
+    <section class="form-section">
+        <h2 class="form-section-title">Publication</h2>
+        <div class="form-group">
+            <label for="id_publisher" class="form-label">Publisher</label>
+            {{ form.publisher }}
+        </div>
+        <div class="form-group">
+            <label for="id_category" class="form-label">Category</label>
+            {{ form.category }}
+        </div>
+    </section>
+
+    <button type="submit" class="btn btn-primary">Save changes</button>
+    <a href="{% url 'news:article_detail' article.pk %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

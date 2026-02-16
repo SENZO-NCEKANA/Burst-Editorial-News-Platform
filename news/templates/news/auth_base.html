@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Burst{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Read and publish news. Subscribe to publishers and journalists.{% endblock %}">
+    <meta name="author" content="Burst">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#0d9488">
+
+    {% block meta_extra %}{% endblock %}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}Burst{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Read and publish news. Subscribe to publishers and journalists.{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:site_name" content="{{ SITE_NAME }}">
+    {% block og_image %}{% endblock %}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="{% block twitter_card %}summary{% endblock %}">
+    <meta name="twitter:title" content="{% block twitter_title %}Burst{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Read and publish news. Subscribe to publishers and journalists.{% endblock %}">
+    {% block twitter_image %}{% endblock %}
+
+    <link rel="icon" href="{% static 'news/favicon.svg' %}" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'news/css/main.css' %}">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-primary">
+                <a href="{% url 'news:home' %}" class="nav-brand">Burst</a>
+            </div>
+            <div class="nav-secondary">
+                {% block auth_nav %}
+                <a href="{% url 'news:login' %}">Sign in</a>
+                <a href="{% url 'news:register' %}" class="nav-link-highlight">Create account</a>
+                {% endblock %}
+            </div>
+        </nav>
+    </header>
+
+    <main id="main-content" class="auth-page">
+        <div class="auth-container">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message {{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% block auth_content %}
+            {% endblock %}
+        </div>
+    </main>
+    <footer class="site-footer">
+        <div class="footer-content">
+            <span>Need help?</span>
+            <a href="mailto:support@burst.app">support@burst.app</a>
+        </div>
+    </footer>
+</body>
+</html>

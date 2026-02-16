@@ -1,0 +1,123 @@
+{% extends 'news/base.html' %}
+
+{% block title %}Home - Burst{% endblock %}
+
+{% block content %}
+<h1>Latest news</h1>
+<p class="page-lead">Discover articles and newsletters from publishers and journalists you care about.</p>
+
+<div class="search-form">
+    <form method="get" action="{% url 'news:search_articles' %}" class="search-form-inline">
+        <div class="form-group">
+            <input type="text" name="q" class="form-control" placeholder="Search articles..." value="{{ query }}" aria-label="Search">
+        </div>
+        <div class="form-group">
+            <select name="category" class="form-control" aria-label="Filter by category">
+                <option value="">All categories</option>
+                {% for category in categories %}
+                    <option value="{{ category.name }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <select name="publisher" class="form-control" aria-label="Filter by publisher">
+                <option value="">All publishers</option>
+                {% for publisher in publishers %}
+                    <option value="{{ publisher.name }}">{{ publisher.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
+
+{% if page_obj %}
+    {% for article in page_obj %}
+        <article class="article-card">
+            {% if article.hero_image_url %}
+            <a href="{% url 'news:article_detail' article.pk %}" class="article-card-image-link">
+                <img src="{{ article.hero_image_url }}" alt="" class="article-card-hero">
+            </a>
+            {% endif %}
+            <div class="article-card-body">
+                <h2 class="article-title">
+                    <a href="{% url 'news:article_detail' article.pk %}">{{ article.title }}</a>
+                </h2>
+                <div class="article-meta">
+                    By {{ article.author.username }}
+                    {% if article.publisher %} · {{ article.publisher.name }}{% endif %}
+                    {% if article.category %} · {{ article.category.name }}{% endif %}
+                    · {{ article.created_at|date:"M d, Y" }}
+                    · {{ article.reading_time_minutes }} min read
+                </div>
+                {% if article.summary %}
+                    <p>{{ article.summary }}</p>
+                {% endif %}
+                <div class="article-actions">
+                    <a href="{% url 'news:article_detail' article.pk %}" class="btn btn-primary">Read article</a>
+                </div>
+            </div>
+        </article>
+    {% endfor %}
+
+    {% if page_obj.has_other_pages %}
+        <nav class="pagination" aria-label="Article pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if current_category %}&category={{ current_category|urlencode }}{% endif %}{% if current_publisher %}&publisher={{ current_publisher|urlencode }}{% endif %}">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if current_category %}&category={{ current_category|urlencode }}{% endif %}{% if current_publisher %}&publisher={{ current_publisher|urlencode }}{% endif %}">Previous</a>
+            {% endif %}
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if current_category %}&category={{ current_category|urlencode }}{% endif %}{% if current_publisher %}&publisher={{ current_publisher|urlencode }}{% endif %}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if current_category %}&category={{ current_category|urlencode }}{% endif %}{% if current_publisher %}&publisher={{ current_publisher|urlencode }}{% endif %}">Last</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+
+{% else %}
+    <div class="empty-state">
+        <p class="empty-state-title">No articles found</p>
+        <p class="empty-state-text">
+            {% if current_category or current_publisher %}
+                No articles match your filters. Try selecting different categories or publishers above.
+            {% else %}
+                No articles yet. <a href="{% url 'news:register' %}">Create an account</a> to start reading or publishing.
+            {% endif %}
+        </p>
+        {% if current_category or current_publisher %}
+        <a href="{% url 'news:home' %}" class="btn btn-secondary">Clear filters</a>
+        {% endif %}
+    </div>
+{% endif %}
+
+{% if newsletters %}
+<section class="home-newsletters" style="margin-top: var(--spacing-2xl, 3rem);">
+    <h2>Recent newsletters</h2>
+    <div class="article-card-list">
+        {% for nl in newsletters %}
+        <article class="article-card">
+            {% if nl.cover_image_url %}
+            <a href="{% url 'news:newsletter_detail' nl.pk %}" class="article-card-image-link">
+                <img src="{{ nl.cover_image_url }}" alt="" class="article-card-hero">
+            </a>
+            {% endif %}
+            <div class="article-card-body">
+                <h2 class="article-title">
+                    <a href="{% url 'news:newsletter_detail' nl.pk %}">{{ nl.title }}</a>
+                </h2>
+                <div class="article-meta">
+                    By {{ nl.author.username }}
+                    {% if nl.publisher %} · {{ nl.publisher.name }}{% endif %}
+                    · {{ nl.created_at|date:"M d, Y" }}
+                </div>
+                <a href="{% url 'news:newsletter_detail' nl.pk %}" class="btn btn-primary">Read newsletter</a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    <p><a href="{% url 'news:newsletter_list' %}" class="btn btn-secondary">View all newsletters</a></p>
+</section>
+{% endif %}
+{% endblock %}

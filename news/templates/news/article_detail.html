@@ -1,0 +1,67 @@
+{% extends 'news/base.html' %}
+
+{% block title %}{{ article.title }} - Burst{% endblock %}
+
+{% block meta_description %}{% if article.summary %}{{ article.summary|truncatewords:30 }}{% else %}{{ article.content|striptags|truncatewords:30 }}{% endif %}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}{{ article.title }} - Burst{% endblock %}
+{% block og_description %}{% if article.summary %}{{ article.summary|truncatewords:50 }}{% else %}{{ article.content|striptags|truncatewords:50 }}{% endif %}{% endblock %}
+{% block twitter_title %}{{ article.title }} - Burst{% endblock %}
+{% block twitter_description %}{% if article.summary %}{{ article.summary|truncatewords:50 }}{% else %}{{ article.content|striptags|truncatewords:50 }}{% endif %}{% endblock %}
+{% if article.hero_image_url %}{% block og_image %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ article.hero_image_url }}">
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ article.hero_image_url }}">
+{% endblock %}{% endif %}
+
+{% block content %}
+<article class="article-card article-detail">
+    {% if article.hero_image_url %}
+    <img src="{{ article.hero_image_url }}" alt="" class="article-detail-hero">
+    {% endif %}
+    <header>
+        <h1 class="article-title">{{ article.title }}</h1>
+        <div class="article-meta">
+            By {{ article.author.username }}
+            {% if article.publisher %} · {{ article.publisher.name }}{% endif %}
+            {% if article.category %} · {{ article.category.name }}{% endif %}
+            · {{ article.created_at|date:"M d, Y" }}
+            · {{ article.reading_time_minutes }} min read
+            {% if article.is_approved %}
+                · <span class="status-approved">Approved</span>
+            {% endif %}
+        </div>
+    </header>
+
+    {% if article.summary %}
+        <div class="article-summary">
+            <h3>Summary</h3>
+            <p>{{ article.summary }}</p>
+        </div>
+    {% endif %}
+
+    <div class="article-content">
+        {{ article.content|linebreaks }}
+    </div>
+
+    <div class="article-share">
+        <span class="article-share-label">Share</span>
+        <a href="https://twitter.com/intent/tweet?text={{ article.title|urlencode }}&url={{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer" class="btn btn-share" aria-label="Share on Twitter">Twitter</a>
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer" class="btn btn-share" aria-label="Share on LinkedIn">LinkedIn</a>
+        <a href="https://wa.me/?text={{ article.title|urlencode }}%20{{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer" class="btn btn-share" aria-label="Share on WhatsApp">WhatsApp</a>
+        <button type="button" class="btn btn-share" onclick="navigator.clipboard.writeText('{{ request.build_absolute_uri }}'); this.textContent='Copied!'" aria-label="Copy link">Copy link</button>
+    </div>
+
+    {% if user.is_authenticated %}
+        <div class="article-actions">
+            {% if user == article.author or user.is_editor %}
+                <a href="{% url 'news:edit_article' article.pk %}" class="btn btn-secondary">Edit</a>
+            {% endif %}
+            {% if user.is_editor and not article.is_approved %}
+                <a href="{% url 'news:approve_article' article.pk %}" class="btn btn-primary">Review and approve</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</article>
+
+<a href="{% url 'news:article_list' %}" class="btn btn-secondary">Back to articles</a>
+{% endblock %}

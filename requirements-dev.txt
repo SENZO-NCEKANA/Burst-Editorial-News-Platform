@@ -1,0 +1,9 @@
+# Burst News Application — Development Dependencies
+# Install: pip install -r requirements.txt -r requirements-dev.txt
+
+-r requirements.txt
+
+# Testing & Code Quality
+coverage>=7.0.0
+django-debug-toolbar>=4.0.0
+django-extensions>=3.2.0

@@ -1,0 +1,24 @@
+# Run Burst from Docker Hub (no build).
+# Replace YOUR_DOCKERHUB_USERNAME with your Docker Hub username.
+# Usage: docker compose -f docker-compose.pull.yml up
+
+services:
+  web:
+    image: YOUR_DOCKERHUB_USERNAME/burst-news:latest
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DEBUG=${DEBUG:-True}
+      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,web
+      - DB_ENGINE=${DB_ENGINE:-sqlite}
+      - DB_NAME=/app/data/db.sqlite3
+    volumes:
+      - ./media:/app/media
+      - db_data:/app/data
+    entrypoint: ["sh", "/app/docker-entrypoint.sh"]
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+volumes:
+  db_data:
